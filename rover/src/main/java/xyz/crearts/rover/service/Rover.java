@@ -4,14 +4,16 @@ import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.RaspiPin;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 import xyz.crearts.rover.component.*;
+import xyz.crearts.rover.event.EventRoverControl;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 @Service
-public class Rover extends Component {
+public class Rover extends Component implements ApplicationListener<EventRoverControl> {
     @Value("${rover.mock:false}")
     boolean isMock;
 
@@ -55,5 +57,10 @@ public class Rover extends Component {
 
     public Engine getEngine() {
         return engine;
+    }
+
+    @Override
+    public void onApplicationEvent(EventRoverControl eventRoverControl) {
+        engine.moveForward(eventRoverControl.getStatus().getLeftWeal(), eventRoverControl.getStatus().getRightWeal());
     }
 }

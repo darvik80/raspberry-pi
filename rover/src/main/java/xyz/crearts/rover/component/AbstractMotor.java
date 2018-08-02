@@ -10,16 +10,16 @@ public class AbstractMotor extends Component implements Motor {
 
     @Override
     public void moveForward(int speed) {
-        log.info("%s:%s moveForward, speed: %d", getType(), getId(), speed);
+        log.info("{}:{} moveForward, speed: {}", getType(), getId(), speed);
     }
 
     @Override
     public void moveBackward(int speed) {
-        log.info("%s:%s moveBackward, speed: %d", getType(), getId(), speed);
+        log.info("%s:%s moveBackward, speed: {}", getType(), getId(), speed);
     }
 
     @Override
     public void stop() {
-        log.info("%s:%s stop");
+        log.info("{}:{} stop");
     }
 }
