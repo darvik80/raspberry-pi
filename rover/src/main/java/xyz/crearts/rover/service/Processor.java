@@ -1,6 +1,5 @@
 package xyz.crearts.rover.service;
 
-import lombok.Data;
 import net.java.games.input.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -9,8 +8,6 @@ import xyz.crearts.rover.event.EventRoverControl;
 import xyz.crearts.rover.model.RoverControlState;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -26,17 +23,26 @@ public class Processor implements Runnable {
     @Override
     public void run() {
         try {
-
+            Controller gamepad = null;
             System.out.println(Arrays.toString(ControllerEnvironment.getDefaultEnvironment().getControllers()));
+            for (Controller controller : ControllerEnvironment.getDefaultEnvironment().getControllers()) {
+                System.out.println(controller.getName());
+                System.out.println("\t" + controller.getType());
+                if (controller.getName().equals("sunxi-ir")) {
+                    gamepad = controller;
+                }
+            }
 
+            /*
             List<Controller> gamepads = Arrays.stream(ControllerEnvironment.getDefaultEnvironment().getControllers()).filter(controller ->
                     controller.getType().equals(Controller.Type.GAMEPAD)).collect(Collectors.toList());
             Controller gamepad = gamepads.get(0); // only working with one gamepad
+            */
 
             Event event;
 
             RoverControlState state = RoverControlState.builder().build();
-            while (true) {
+            while (gamepad != null) {
                 gamepad.poll();
 
                 EventQueue eq = gamepad.getEventQueue();
@@ -56,11 +62,10 @@ public class Processor implements Runnable {
                             break;
                     }
 
-                    /*
                     StringBuffer buffer = new StringBuffer(gamepad.getName());
                     buffer.append(" at ");
                     buffer.append(event.getNanos()).append(", ");
-                    Component comp = event.getComponent();
+                    //Component comp = event.getComponent();
                     buffer.append(comp.getName()).append(" changed to ");
                     float value = event.getValue();
                     if(comp.isAnalog()) {
@@ -73,7 +78,6 @@ public class Processor implements Runnable {
                         }
                     }
                     System.out.println(buffer.toString());
-                    */
                 }
 
                 if (updated) {
